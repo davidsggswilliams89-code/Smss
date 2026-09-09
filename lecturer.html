@@ -88,12 +88,12 @@
 <div id="detailModal" class="modal"><div class="modal-box"><div class="modal-head"><div><h2>Lecturer Details</h2><p>Complete lecturer record.</p></div><button class="close" onclick="closeDetails()">×</button></div><div id="details" class="detail-grid"></div><div class="modal-actions"><button class="cancel" onclick="closeDetails()">Close</button></div></div></div>
 
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut,setPersistence,browserLocalPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig={apiKey:"AIzaSyDfHJaoVE7eQKWWq71zn2bQOpR4Vot9v8c",authDomain:"smsh-282c0.firebaseapp.com",projectId:"smsh-282c0",storageBucket:"smsh-282c0.firebasestorage.app",messagingSenderId:"477828256463",appId:"1:477828256463:web:80a6755b679f585c73ddba"};
 const auth=getAuth(initializeApp(firebaseConfig));setPersistence(auth,browserLocalPersistence).catch(()=>{});
 const roles={"admin@shtms.com":"admin","registrar@shtms.com":"registrar","hod@shtms.com":"hod","lecturer@shtms.com":"lecturer","bursary@shtms.com":"bursary","student@shtms.com":"student"};
-onAuthStateChanged(auth,u=>{if(!u||roles[(u.email||"").toLowerCase()]!=="admin"){sessionStorage.clear();location.href="index.html";return}document.body.style.visibility="visible";render()});
+setPersistence(auth,browserLocalPersistence).then(()=>onAuthStateChanged(auth,u=>{if(!u||roles[(u.email||"").toLowerCase()]!=="admin"){location.href="index.html";return}document.body.style.visibility="visible";render()})).catch(()=>onAuthStateChanged(auth,u=>{if(!u||roles[(u.email||"").toLowerCase()]!=="admin"){location.href="index.html";return}document.body.style.visibility="visible";render()}));
 window.logout=async()=>{try{await signOut(auth)}finally{sessionStorage.clear();location.href="index.html"}};
 const KEY="shtms_lecturers";const get=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}},set=v=>localStorage.setItem(KEY,JSON.stringify(v));
 function seed(){if(get().length)return;set([
@@ -118,19 +118,6 @@ document.getElementById("today").textContent=new Date().toLocaleDateString("en-N
 
 
 
-<script id="shtms-navigation">
-(function(){
-  const routes={"Dashboard":"SHTMS-admin-dashboard.html","Students":"admin-student.html","Lecturers":"lecturer.html","Departments":"department.html","Programmes":"programmes.html","Courses":"courses.html","Results":"results.html","Payments":"payments.html","User Management":"user-management.html","Users":"user-management.html","Reports":"reports.html","Settings":"settings.html"};
-  document.addEventListener("click",function(e){
-    const b=e.target.closest&&e.target.closest(".nav button[data-page]");
-    if(!b) return;
-    const target=routes[b.dataset.page];
-    if(target){
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      window.location.assign(target);
-    }
-  },true);
-})();
-</script>
+
+<script id="shtms-navigation">(function(){const routes={"Dashboard":"SHTMS-admin-dashboard.html","Students":"admin-student.html","Lecturers":"lecturer.html","Departments":"department.html","Programmes":"programmes.html","Courses":"courses.html","Results":"results.html","Payments":"payments.html","User Management":"user-management.html","Users":"user-management.html","Reports":"reports.html","Settings":"settings.html"};document.addEventListener("click",function(e){const b=e.target.closest&&e.target.closest(".nav button[data-page]");if(!b)return;const t=routes[b.dataset.page];if(t){e.preventDefault();e.stopImmediatePropagation();window.location.assign(t);}},true);})();</script>
 </body></html>
